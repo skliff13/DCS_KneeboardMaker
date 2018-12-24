@@ -137,6 +137,6 @@ looking similar to this:
  be built into a user mission. 
  Looking like this:
  
- ![Alt text](readme_figs/04_out_slides.jpg?raw=true "Title")
+ ![Alt text](readme_figs/04_out_slides.png?raw=true "Title")
  
  
