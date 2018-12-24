@@ -21,7 +21,7 @@ It's up to the user.
 
 Example (see file `stitched.png`, 2742 x 1544 pixels):
 
- ![Alt text](readme_figs/01_stitched_small.png?raw=true "Title")
+ ![Alt text](readme_figs/01_stitched_small.jpg?raw=true "Title")
 
 ##### 2) List of landmarks
 
@@ -100,7 +100,7 @@ scale need to be assessed and put as a value of
 `scaleKilometersPerPixel` field. 
 Possible scheme of scale assessment is shown below. 
  
- ![Alt text](readme_figs/02_scale_measurement.png?raw=true "Title")
+ ![Alt text](readme_figs/02_scale_measurement.jpg?raw=true "Title")
   
 ##### 2) Altering display settings
 
