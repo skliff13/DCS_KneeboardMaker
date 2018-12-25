@@ -3,6 +3,8 @@
 This tool allows generating kneeboard slides 
 that can be used for navigation in Digital 
 Combat Simulator (DCS) missions.
+Examples of the generated slides are shown in the last
+section of this README.
 
 ## Input data
 
@@ -120,7 +122,10 @@ colors of different elements.
 ## Running the script
 
 Once everything is done, the script can be run `main.py` 
-script using your favourite Python3.7 interpreter. 
+script using your favourite Python3.7 interpreter: 
+
+`>> path/to/your/python main.py`
+
 Required python packages are listed in `requirements.txt`.
 All these are standard packages and can be easily 
 installed using `pip`. 
@@ -137,6 +142,6 @@ looking similar to this:
  be built into a user mission. 
  Looking like this:
  
- ![Alt text](readme_figs/04_out_slides.png?raw=true "Title")
+ ![Alt text](readme_figs/04_out_slides.jpg?raw=true "Title")
  
  
