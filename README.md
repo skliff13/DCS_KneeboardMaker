@@ -132,16 +132,17 @@ installed using `pip`.
 
 If succeeded, the script must generate a number of files 
 in the specified `output_dir`. 
-Among them there should be larger and smaller versions 
-of the region map with marked landmarks and connections, 
+Among them there should be larger (`map_large.jpg`) 
+and smaller (`map_preview.jpg`) versions of the region 
+map with marked landmarks and connections, 
 looking similar to this:
 
  ![Alt text](readme_figs/03_map_preview.jpg?raw=true "Title")
  
- And a list of ready-to-use kneeboard slides which can
- be built into a user mission. 
+ And a list of ready-to-use kneeboard slide files
+ (`kneeboard_*.jpg`) which can  be built into a user mission. 
  Looking like this:
  
  ![Alt text](readme_figs/04_out_slides.jpg?raw=true "Title")
  
- 
+ Enjoy!
