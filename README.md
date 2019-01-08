@@ -146,4 +146,5 @@ looking similar to this:
  ![Alt text](readme_figs/04_out_slides.jpg?raw=true "Title")
  
 Enjoy!
+
 Me on DCS forums: https://forums.eagle.ru/member.php?u=124290
