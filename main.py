@@ -161,7 +161,7 @@ class KneeboardMaker:
         im = Image.fromarray(big)
         h = round(big.shape[0] * 1024. / big.shape[1])
         im.thumbnail((1024, h), Image.ANTIALIAS)
-        im.save(os.path.join(cfg.output_dir, 'map_preview.jpg'))
+        im.save(os.path.join(cfg.output_dir, 'map_preview.png'))
 
         print('Saving kneeboard pages')
         for i in range(len(cfg.slide_topleft_XYs)):
@@ -171,7 +171,7 @@ class KneeboardMaker:
 
             im = Image.fromarray(small)
             im.thumbnail(cfg.slide_output_size, Image.ANTIALIAS)
-            output_map_filename = 'kneeboard_%i_of_%i.jpg' % (i + 1, len(cfg.slide_topleft_XYs))
+            output_map_filename = 'kneeboard_%i_of_%i.png' % (i + 1, len(cfg.slide_topleft_XYs))
             im.save(os.path.join(cfg.output_dir, output_map_filename))
 
 

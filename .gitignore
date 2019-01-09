@@ -1,4 +1,8 @@
+__pycache__
 _bak
 _dev
+.idea
+.git
 out_*
 *.cmd
+*.pyc
