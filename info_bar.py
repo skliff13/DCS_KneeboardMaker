@@ -14,6 +14,19 @@ class InfoBar:
         self.__add_label('')
         self.__add_label('Display settings', anchor=N)
         self.scale_label = self.__add_label('Scale (+/-): ')
+        self.__add_label('')
+        self.__add_label('Landmarks', anchor=N)
+
+        scrollbar = Scrollbar(self.frame, orient=VERTICAL)
+        scrollbar.pack(side=RIGHT, fill=Y)
+        self.listbox = Listbox(self.frame)
+        self.listbox.pack(side=TOP, fill=BOTH, expand=True)
+        self.listbox.config(yscrollcommand=scrollbar.set)
+        scrollbar.config(command=self.listbox.yview)
+
+        for i in range(100):
+            self.listbox.insert(END, i)
+
 
     def __add_label(self, text, anchor=NW):
         label = Label(self.frame, width=40, text=text, anchor=anchor, justify=LEFT, bd=4)
