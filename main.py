@@ -120,7 +120,8 @@ class KneeboardMaker:
             ax.add_artist(rectangle)
 
             dist_text = '%i km\n%i nm' % (distance_km, distance_nm)
-            plt.text(center_x, center_y, dist_text, horizontalalignment='center', verticalalignment='center', fontdict=font)
+            plt.text(center_x, center_y, dist_text, horizontalalignment='center', verticalalignment='center',
+                     fontdict=font)
 
     def draw_conn_line(self, ax, r1, r2, x01, x02, y01, y02):
         sts: DisplaySettings = self.sts
@@ -148,9 +149,11 @@ class KneeboardMaker:
         print('Putting landmarks')
         for row in landmarks_table.iterrows():
             row = row[1]
-            c = plt.Circle((row.X, row.Y), row.R * sts.radiusMultiplier, edgecolor=row.Color, facecolor='none', linewidth=lw)
+            c = plt.Circle((row.X, row.Y), row.R * sts.radiusMultiplier, edgecolor=row.Color, facecolor='none',
+                           linewidth=lw)
             ax.add_artist(c)
-            plt.text(row.X, row.Y, row.ShortName, horizontalalignment='center', verticalalignment='center', fontdict=font)
+            plt.text(row.X, row.Y, row.ShortName, horizontalalignment='center', verticalalignment='center',
+                     fontdict=font)
 
     def cut_for_kneeboard(self):
         cfg: Configuration = self.cfg
