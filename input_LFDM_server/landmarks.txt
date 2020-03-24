@@ -1,0 +1,11 @@
+ID,Name,ShortName,X,Y,R,Color,Grid
+1,Brucheville,BC,660,607,29,c,XV27
+2,Bullseye-Blue,BY,957,565,29,b,XV47
+3,Ground-B1,B1,767,816,29,b,XV35
+4,Ground-B2,B2,768,1046,29,b,XV34
+5,Blue-Train,BT,847,854,29,b,XV45
+6,Bullseye-Red,RY,1471,662,29,r,XV86
+7,Red-Trein,RT,1272,766,29,r,XV65
+8,Ground-R1,R1,1203,879,29,r,XV65
+9,Ground-R2,R2,1147,1085,29,r,XV64
+

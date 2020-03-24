@@ -15,7 +15,7 @@ class DisplaySettings:
         self.angleRectangleHeight = 23
         self.connectionWidth = 1.5
 
-        self.connectionColor = 'y'      # color of the connection lines
+        self.connectionColor = 'gold'      # color of the connection lines
         self.radiusMultiplier = 1.0     # affects all the radii
         self.minConnCenterDistKm = 10   # minimum distance for the connection info to be drawn
 

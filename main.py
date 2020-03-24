@@ -43,8 +43,10 @@ class KneeboardMaker:
 
         ax.imshow(im)
 
-        self.draw_landmarks(ax, landmarks_table)
-        self.draw_connections(ax, connections_table, landmarks_table)
+        if self.cfg.draw_landmarks:
+            self.draw_landmarks(ax, landmarks_table)
+        if self.cfg.draw_connections:
+            self.draw_connections(ax, connections_table, landmarks_table)
 
         if not os.path.isdir(cfg.output_dir):
             os.mkdir(cfg.output_dir)
@@ -56,12 +58,12 @@ class KneeboardMaker:
         row = row[1]
         mrk1 = landmarks_table.loc[landmarks_table['ShortName'] == row.NM1]
         mrk2 = landmarks_table.loc[landmarks_table['ShortName'] == row.NM2]
-        r1 = mrk1['R'].get_values()[0]
-        r2 = mrk2['R'].get_values()[0]
-        x01 = mrk1['X'].get_values()[0]
-        y01 = mrk1['Y'].get_values()[0]
-        x02 = mrk2['X'].get_values()[0]
-        y02 = mrk2['Y'].get_values()[0]
+        r1 = int(mrk1['R'])
+        r2 = int(mrk2['R'])
+        x01 = int(mrk1['X'])
+        y01 = int(mrk1['Y'])
+        x02 = int(mrk2['X'])
+        y02 = int(mrk2['Y'])
 
         return r1, r2, x01, x02, y01, y02
 
