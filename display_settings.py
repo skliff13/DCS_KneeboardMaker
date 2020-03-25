@@ -1,9 +1,8 @@
 
 class DisplaySettings:
     def __init__(self):
-        self.outputDPI = 600                            # Digits Per Inch, controls resolution of the output large image
         self.imageBrightnessAndContrast = (-40., 1.5)   # out = in * contrast + brightness
-        self.scale = 0.7                                # makes all outputs smaller/bigger
+        self.scale = 4                                # makes all outputs smaller/bigger
 
         # sizes of fonts and elements
         self.landmarkFontSize = 12
@@ -21,13 +20,13 @@ class DisplaySettings:
 
         # scaling operations
         scale = self.scale
-        self.landmarkFontSize = round(self.landmarkFontSize * scale)
-        self.distanceFontSize = round(self.distanceFontSize * scale)
-        self.connectionMargin = round(self.connectionMargin * scale)
-        self.distanceRectangleWidth = round(self.distanceRectangleWidth * scale)
-        self.distanceRectangleHeight = round(self.distanceRectangleHeight * scale)
-        self.angleRectangleWidth = round(self.angleRectangleWidth * scale)
-        self.angleRectangleHeight = round(self.angleRectangleHeight * scale)
-        self.connectionWidth = self.connectionWidth * scale
+        self.landmarkFontSize = int(round(self.landmarkFontSize * scale))
+        self.distanceFontSize = int(round(self.distanceFontSize * scale))
+        self.connectionMargin = int(round(self.connectionMargin * scale))
+        self.distanceRectangleWidth = int(round(self.distanceRectangleWidth * scale))
+        self.distanceRectangleHeight = int(round(self.distanceRectangleHeight * scale))
+        self.angleRectangleWidth = int(round(self.angleRectangleWidth * scale))
+        self.angleRectangleHeight = int(round(self.angleRectangleHeight * scale))
+        self.connectionWidth = int(self.connectionWidth * scale)
         self.radiusMultiplier = self.radiusMultiplier * scale
 

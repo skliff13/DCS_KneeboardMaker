@@ -1,6 +1,8 @@
+import os
+import json
 import warnings
 import numpy as np
-from PIL import ImageTk, Image as PIL_Image, ImageDraw, ImageFont
+from PIL import ImageTk, Image as PIL_Image, ImageDraw, ImageFont, ImageColor
 from skimage import io
 from tkinter import *
 from tkinter import messagebox
@@ -37,8 +39,8 @@ class MainWindow(Tk):
         self.min_display_scale = 1
         self.max_display_scale = 8
 
-        w = 640
-        h = 480
+        w = 800
+        h = 600
         self.img = np.ones((h, w, 3), dtype=np.uint8) * 127
         empty_preview = PIL_Image.fromarray(self.img)
         empty_preview = ImageTk.PhotoImage(empty_preview)
@@ -60,14 +62,18 @@ class MainWindow(Tk):
         self.mainloop()
 
     def mouse_move(self, event):
-        x = (event.x + self.x_scrollbar.get()[0] * self.img.shape[1]) * self.display_scale
-        y = (event.y + self.y_scrollbar.get()[0] * self.img.shape[0]) * self.display_scale
+        x = event.x + self.x_scrollbar.get()[0] * self.img.shape[1]
+        y = event.y + self.y_scrollbar.get()[0] * self.img.shape[0]
+        x = int(x * self.display_scale)
+        y = int(y * self.display_scale)
         s = f'XY = ({x}, {y})'
         self.status_bar.set_status(s)
 
     def left_click(self, event):
-        x = event.x * self.display_scale
-        y = event.y * self.display_scale
+        x = event.x + self.x_scrollbar.get()[0] * self.img.shape[1]
+        y = event.y + self.y_scrollbar.get()[0] * self.img.shape[0]
+        x = int(x * self.display_scale)
+        y = int(y * self.display_scale)
 
         msg = 'Please enter comma-separated landmark properties in format:\n'
         msg += '\nLandmarkName,CODE,radius,color\n\n'
@@ -87,6 +93,7 @@ class MainWindow(Tk):
 
         landmark_string += f',{x},{y}'
         self.info_bar.listbox.insert(END, landmark_string)
+        self.update_preview()
 
     @staticmethod
     def validate_landmark_string(s):
@@ -100,9 +107,17 @@ class MainWindow(Tk):
             if i < 1:
                 raise Exception('.')
         except:
-            return 'Third value must be positive integer'
+            msg = f'"{parts[2]}" is not a valid positive integer\n\n'
+            msg += 'Third value must be positive integer'
+            return msg
 
-        # TODO check last value to be valid color identifier
+        try:
+            ImageColor.getrgb(parts[3])
+        except:
+            msg = f'"{parts[3]}" is not a valid color string\n\n'
+            msg += 'Fourth value must be a valid color name (e.g. "red", "blue", "cyan", "yellow", "magenta", ...)'
+            return msg
+
         return None
 
     def zoom_in(self, _=None):
@@ -117,11 +132,20 @@ class MainWindow(Tk):
             self.update_preview()
             self.info_bar.update_info()
 
+    def save_info(self, _=None):
+        info_path = os.path.splitext(self.file_path)[0] + '_info.json'
+
+        info = {'landmarks': [s for s in self.info_bar.listbox.get(0, last=END)]}
+
+        with open(info_path, 'wt') as f:
+            json.dump(info, f, indent=2)
+
+        self.status_bar.set_status('Image info saved')
+
     def open_image(self, _=None):
         formats = '*.jpg *.png *.bmp *.jpeg *.JPG *.JPEG *.PNG *.BMP'
-        file_path = askopenfilename(initialdir='test_data/',
-                                    filetypes=(('Image files', formats), ('All Files', '*.*')),
-                                    title='Choose a file.')
+        file_types = (('Image files', formats), ('All Files', '*.*'))
+        file_path = askopenfilename(initialdir='test_data/', filetypes=file_types, title='Choose a file.')
 
         if not file_path:
             return
@@ -132,13 +156,31 @@ class MainWindow(Tk):
             self.file_path = file_path
             self.img = img
             self.status_bar.set_status('Image loaded')
+        except Exception as e:
+            self.status_bar.set_status('Image load failed')
+            msg = f'Failed to read image from "{file_path}":\n\n{str(e)}'
+            messagebox.showwarning('Failed to read image', msg)
+
+        info_path = os.path.splitext(file_path)[0] + '_info.json'
+        if not os.path.isfile(info_path):
+            self.info_bar.update_info()
+            self.update_preview()
+            return
+
+        try:
+            with open(info_path,'rt') as f:
+                info = json.load(f)
+
+            landmarks = info['landmarks']
+            for landmark in landmarks:
+                self.info_bar.listbox.insert(END, landmark)
 
             self.info_bar.update_info()
             self.update_preview()
         except Exception as e:
             self.status_bar.set_status('Image load failed')
-            messagebox.showwarning('Failed to read image',
-                                   'Failed to read image from "%s":\n\n%s' % (file_path, str(e)))
+            msg = f'Failed to read image from "{file_path}":\n\n{str(e)}'
+            messagebox.showwarning('Failed to read image', msg)
 
     def update_preview(self):
         preview = PIL_Image.fromarray(self.img)
@@ -158,8 +200,7 @@ class MainWindow(Tk):
 
         draw = ImageDraw.Draw(preview)
 
-        # font = {'size': sts.landmarkFontSize}
-        sz = 50
+        sz = sts.landmarkFontSize
         font = ImageFont.truetype('/usr/share/fonts/truetype/ubuntu/Ubuntu-B.ttf', size=sz)
         lw = sts.connectionWidth
 
@@ -168,14 +209,10 @@ class MainWindow(Tk):
             _, code, r, color, x, y = parts
             r, x, y = tuple(map(int, (r, x, y)))
 
-            draw.ellipse((x - r, y - r, x + r, y + r), outline=color)
-            draw.text((x - sz // 4 * 3, y - sz // 2), code, font=font)
-
-        #     c = plt.Circle((row.X, row.Y), row.R * sts.radiusMultiplier, edgecolor=row.Color, facecolor='none',
-        #                    linewidth=lw)
-        #     ax.add_artist(c)
-        #     plt.text(row.X, row.Y, row.ShortName, horizontalalignment='center', verticalalignment='center',
-        #              fontdict=font)
+            for d in range(int(lw)):
+                r1 = r + d
+                draw.ellipse((x - r1, y - r1, x + r1, y + r1), outline=color)
+                draw.text((x - sz // 4 * 3, y - sz // 2), code, font=font)
 
 
 if __name__ == '__main__':

@@ -24,8 +24,6 @@ class InfoBar:
         self.listbox.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.listbox.yview)
 
-        self.listbox.insert(END, 'Aaa,CQ,50,cyan,200,200')
-
     def __add_label(self, text, anchor=NW):
         label = Label(self.frame, width=40, text=text, anchor=anchor, justify=LEFT, bd=4)
         if anchor != NW:
