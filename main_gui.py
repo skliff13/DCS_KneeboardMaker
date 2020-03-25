@@ -78,22 +78,40 @@ class MainWindow(Tk):
         msg = 'Please enter comma-separated landmark properties in format:\n'
         msg += '\nLandmarkName,CODE,radius,color\n\n'
         msg += 'e.g.\nCarpiquet,CQ,58,cyan\nEvreux,ER,46,yellow\n'
+        title = 'Adding landmark'
 
+        landmark_string = self.request_landmark_string(title, msg)
+
+        if not landmark_string:
+            return
+
+        landmark_string += f',{x},{y}'
+        landmarks = list(eval(self.info_bar.landmarks.get()))
+        landmarks.append(landmark_string)
+        self.info_bar.landmarks.set(landmarks)
+
+        self.update_preview()
+
+    def request_landmark_string(self, title, msg, initial_value='A,a,50,yellow'):
+        landmark_string = None
         while True:
-            landmark_string = askstring('Adding landmark', msg)
+            try:
+                landmark_string = askstring(title, msg, initialvalue=initial_value)
+            except:
+                pass
 
             if not landmark_string:
-                return
+                break
 
             check_message = self.validate_landmark_string(landmark_string)
             if check_message:
+                initial_value = landmark_string
+                landmark_string = None
                 messagebox.showwarning('Wrong landmark string', check_message)
             else:
                 break
 
-        landmark_string += f',{x},{y}'
-        self.info_bar.listbox.insert(END, landmark_string)
-        self.update_preview()
+        return landmark_string
 
     @staticmethod
     def validate_landmark_string(s):
@@ -172,15 +190,14 @@ class MainWindow(Tk):
                 info = json.load(f)
 
             landmarks = info['landmarks']
-            for landmark in landmarks:
-                self.info_bar.listbox.insert(END, landmark)
+            self.info_bar.landmarks.set(landmarks)
 
             self.info_bar.update_info()
             self.update_preview()
         except Exception as e:
-            self.status_bar.set_status('Image load failed')
-            msg = f'Failed to read image from "{file_path}":\n\n{str(e)}'
-            messagebox.showwarning('Failed to read image', msg)
+            self.status_bar.set_status('Image info load failed')
+            msg = f'Failed to read image info from "{file_path}":\n\n{str(e)}'
+            messagebox.showwarning('Failed to read image info', msg)
 
     def update_preview(self):
         preview = PIL_Image.fromarray(self.img)

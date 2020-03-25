@@ -19,7 +19,9 @@ class InfoBar:
 
         scrollbar = Scrollbar(self.frame, orient=VERTICAL)
         scrollbar.pack(side=RIGHT, fill=Y)
-        self.listbox = Listbox(self.frame)
+        self.landmarks = StringVar()
+        self.listbox = Listbox(self.frame, listvariable=self.landmarks)
+        self.listbox.bind('<Double-Button-1>', self.listbox_double_click)
         self.listbox.pack(side=TOP, fill=BOTH, expand=True)
         self.listbox.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.listbox.yview)
@@ -42,3 +44,26 @@ class InfoBar:
 
         text = 'Scale (+/-): 1/' + str(self.root.display_scale)
         self.scale_label.config(text=text)
+
+    def listbox_double_click(self, _=None):
+        item_idx = self.listbox.curselection()[0]
+        landmark = self.listbox.get(item_idx)
+
+        parts = landmark.split(',')
+        xy = parts[4:]
+        landmark = ','.join(parts[:4])
+
+        msg = 'Please enter comma-separated landmark properties in format:\n'
+        msg += '\nLandmarkName,CODE,radius,color\n\n'
+        msg += 'e.g.\nCarpiquet,CQ,58,cyan\nEvreux,ER,46,yellow\n'
+        title = 'Editing landmark'
+
+        landmark_string = self.root.request_landmark_string(title, msg, initial_value=landmark)
+
+        if not landmark_string:
+            return
+
+        landmarks = list(eval(self.landmarks.get()))
+        landmarks[item_idx] = landmark_string + ',' + ','.join(xy)
+        self.landmarks.set(landmarks)
+        self.root.update_preview()
