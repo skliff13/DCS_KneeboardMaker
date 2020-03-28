@@ -3,6 +3,7 @@ _bak
 _dev
 .idea
 .git
-out_*
 *.cmd
 *.pyc
+
+work

@@ -61,6 +61,7 @@ class InfoBar:
         self.connections = StringVar()
         self.listbox_connections = Listbox(connections_frame, listvariable=self.connections)
         self.listbox_connections.bind('<Double-Button-1>', self.lb_connections_double_click)
+        self.listbox_connections.bind('<Delete>', self.lb_connections_delete)
         self.listbox_connections.pack(side=TOP, fill=BOTH, expand=True)
         self.listbox_connections.config(yscrollcommand=scrollbar_connections.set)
         scrollbar_connections.config(command=self.listbox_connections.yview)

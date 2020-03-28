@@ -21,6 +21,8 @@ class DisplaySettings:
         self.connectionColor = 'orange'      # color of the connection lines
         self.radiusMultiplier = 1.0     # affects all the radii
         self.minConnCenterDistKm = 10   # minimum distance for the connection info to be drawn
+        self.export_upsize = 2
+        self.export_interpolation_order = 3
 
         # scaling operations
         scale = self.scale

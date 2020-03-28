@@ -4,6 +4,7 @@ import warnings
 import numpy as np
 from PIL import ImageTk, Image as PIL_Image, ImageColor
 from skimage import io
+from skimage.transform import resize
 from tkinter import *
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
@@ -13,6 +14,7 @@ from drawing import draw_landmarks, draw_connections, draw_slides
 from main_menu import MainMenu
 from status_bar import StatusBar
 from info_bar import InfoBar
+from display_settings import DisplaySettings
 
 
 class MainWindow(Tk):
@@ -99,6 +101,7 @@ class MainWindow(Tk):
         val = self.info_bar.landmarks.get()
         landmarks = list(eval(val)) if val else list()
         landmarks.append(landmark_string)
+        landmarks.sort()
         self.info_bar.landmarks.set(landmarks)
         self.update_preview()
 
@@ -136,6 +139,7 @@ class MainWindow(Tk):
         val = self.info_bar.connections.get()
         connections = list(eval(val)) if val else list()
         connections.append(connection_string)
+        connections.sort()
         self.info_bar.connections.set(connections)
         self.update_preview()
 
@@ -330,6 +334,10 @@ class MainWindow(Tk):
         if self.info_bar.draw_connections.get():
             draw_connections(self, preview)
 
+        sts = DisplaySettings()
+        us = sts.export_upsize
+        order = sts.export_interpolation_order
+
         out_dir = os.path.splitext(self.file_path)[0] + '_slides'
         os.makedirs(out_dir, exist_ok=True)
         img = np.array(preview)
@@ -340,8 +348,17 @@ class MainWindow(Tk):
             top = max(1, min(xy[1] - sh // 2, self.img.shape[0] - sh - 1))
 
             slide = img[top:top + sh, left:left + sw]
-            slide_path = os.path.join(out_dir, 'slide_%02i.png' % i)
+            slide = resize(slide, (slide.shape[0] * us, slide.shape[1] * us), order=order)
+            slide = (slide * 255).astype(np.uint8)
+            slide_path = os.path.join(out_dir, 'slide_%02i.jpg' % i)
             io.imsave(slide_path, slide)
+
+        draw_slides(self, preview)
+        preview = np.array(preview)
+        preview = resize(preview, (preview.shape[0] * us, preview.shape[1] * us), order=order)
+        preview = (preview * 255).astype(np.uint8)
+        preview_path = os.path.join(out_dir, 'preview.jpg')
+        io.imsave(preview_path, preview)
 
         msg = f'The slides have been exported to "{out_dir}"'
         messagebox.showinfo('Export finished', msg)

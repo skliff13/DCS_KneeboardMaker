@@ -6,6 +6,8 @@ Combat Simulator (DCS) missions.
 Examples of the generated slides are shown in the last
 section of this README.
 
+**Note**: the project is under massive reconstruction now 
+
 ## Input data
 
 First, let's consider what kind data must be prepared 
