@@ -19,6 +19,8 @@ class MainMenu:
 
         submenu = Menu(self.menu, tearoff=False)
         self.menu.add_cascade(label='Edit', menu=submenu)
+        submenu.add_command(label='Add connection (Ctrl+N)', command=self.root.add_connection)
+        submenu.add_separator()
         submenu.add_command(label='Zoom in (+)', command=self.root.zoom_in)
         self.root.bind_all('<plus>', self.root.zoom_in)
         self.root.bind_all('<equal>', self.root.zoom_in)
@@ -26,6 +28,7 @@ class MainMenu:
         submenu.add_command(label='Zoom out (-)', command=self.root.zoom_out)
         self.root.bind_all('<minus>', self.root.zoom_out)
         self.root.bind_all('<KP_Subtract>', self.root.zoom_out)
+        self.root.bind_all('<Control-n>', self.root.add_connection)
 
         submenu = Menu(self.menu, tearoff=False)
         self.menu.add_cascade(label='Help', menu=submenu)

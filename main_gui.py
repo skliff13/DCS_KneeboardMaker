@@ -86,17 +86,34 @@ class MainWindow(Tk):
             return
 
         landmark_string += f',{x},{y}'
-        landmarks = list(eval(self.info_bar.landmarks.get()))
+        val = self.info_bar.landmarks.get()
+        landmarks = list(eval(val)) if val else list()
         landmarks.append(landmark_string)
         self.info_bar.landmarks.set(landmarks)
+        self.update_preview()
 
+    def add_connection(self, _=None):
+        msg = 'Please enter two comma-separated landmark codes:\n'
+        msg += '\nCODE1,CODE2\n\n'
+        msg += 'e.g.\nCQ,ER\n'
+        title = 'Adding connection'
+
+        connection_string = self.request_connection_string(title, msg)
+
+        if not connection_string:
+            return
+
+        val = self.info_bar.connections.get()
+        connections = list(eval(val)) if val else list()
+        connections.append(connection_string)
+        self.info_bar.connections.set(connections)
         self.update_preview()
 
     def request_landmark_string(self, title, msg, initial_value='A,a,50,yellow'):
         landmark_string = None
         while True:
             try:
-                landmark_string = askstring(title, msg, initialvalue=initial_value)
+                landmark_string = askstring(title, msg, initialvalue=initial_value, parent=self)
             except:
                 pass
 
@@ -112,6 +129,27 @@ class MainWindow(Tk):
                 break
 
         return landmark_string
+
+    def request_connection_string(self, title, msg, initial_value='L1,L2'):
+        connection_string = None
+        while True:
+            try:
+                connection_string = askstring(title, msg, initialvalue=initial_value)
+            except:
+                pass
+
+            if not connection_string:
+                break
+
+            check_message = self.validate_connection_string(connection_string)
+            if check_message:
+                initial_value = connection_string
+                connection_string = None
+                messagebox.showwarning('Wrong connection string', check_message)
+            else:
+                break
+
+        return connection_string
 
     @staticmethod
     def validate_landmark_string(s):
@@ -138,6 +176,15 @@ class MainWindow(Tk):
 
         return None
 
+    @staticmethod
+    def validate_connection_string(s):
+        parts = s.split(',')
+
+        if len(parts) != 2:
+            return 'There mut be 2 comma-separated values'
+
+        return None
+
     def zoom_in(self, _=None):
         if self.display_scale > self.min_display_scale:
             self.display_scale //= 2
@@ -153,7 +200,8 @@ class MainWindow(Tk):
     def save_info(self, _=None):
         info_path = os.path.splitext(self.file_path)[0] + '_info.json'
 
-        info = {'landmarks': [s for s in self.info_bar.listbox.get(0, last=END)]}
+        info = {'landmarks': [s for s in self.info_bar.listbox_landmarks.get(0, last=END)],
+                'connections': [s for s in self.info_bar.listbox_connections.get(0, last=END)]}
 
         with open(info_path, 'wt') as f:
             json.dump(info, f, indent=2)
@@ -192,6 +240,9 @@ class MainWindow(Tk):
             landmarks = info['landmarks']
             self.info_bar.landmarks.set(landmarks)
 
+            connections = info['connections']
+            self.info_bar.connections.set(connections)
+
             self.info_bar.update_info()
             self.update_preview()
         except Exception as e:
@@ -218,10 +269,10 @@ class MainWindow(Tk):
         draw = ImageDraw.Draw(preview)
 
         sz = sts.landmarkFontSize
-        font = ImageFont.truetype('/usr/share/fonts/truetype/ubuntu/Ubuntu-B.ttf', size=sz)
+        font = ImageFont.truetype('font/Ubuntu-B.ttf', size=sz)
         lw = sts.connectionWidth
 
-        for s in self.info_bar.listbox.get(0, last=END):
+        for s in self.info_bar.listbox_landmarks.get(0, last=END):
             parts = tuple(s.split(','))
             _, code, r, color, x, y = parts
             r, x, y = tuple(map(int, (r, x, y)))

@@ -14,17 +14,40 @@ class InfoBar:
         self.__add_label('')
         self.__add_label('Display settings', anchor=N)
         self.scale_label = self.__add_label('Scale (+/-): ')
+
+        self.draw_landmarks = IntVar(value=1)
+        self.draw_connections = IntVar(value=1)
+        self.cb_frame = Frame(self.frame, bd=4)
+        self.cb_landmarks = Checkbutton(self.cb_frame, text='Draw landmarks', variable=self.draw_landmarks)
+        self.cb_landmarks.pack(side=LEFT)
+        self.cb_connections = Checkbutton(self.cb_frame, text='Draw connections', variable=self.draw_connections)
+        self.cb_connections.pack(side=LEFT)
+        self.cb_frame.pack(side=TOP)
+
         self.__add_label('')
         self.__add_label('Landmarks', anchor=N)
-
-        scrollbar = Scrollbar(self.frame, orient=VERTICAL)
-        scrollbar.pack(side=RIGHT, fill=Y)
+        landmarks_frame = Frame(self.frame)
+        scrollbar_landmarks = Scrollbar(landmarks_frame, orient=VERTICAL)
+        scrollbar_landmarks.pack(side=RIGHT, fill=Y)
         self.landmarks = StringVar()
-        self.listbox = Listbox(self.frame, listvariable=self.landmarks)
-        self.listbox.bind('<Double-Button-1>', self.listbox_double_click)
-        self.listbox.pack(side=TOP, fill=BOTH, expand=True)
-        self.listbox.config(yscrollcommand=scrollbar.set)
-        scrollbar.config(command=self.listbox.yview)
+        self.listbox_landmarks = Listbox(landmarks_frame, listvariable=self.landmarks)
+        self.listbox_landmarks.bind('<Double-Button-1>', self.lb_landmarks_double_click)
+        self.listbox_landmarks.pack(side=TOP, fill=BOTH, expand=True)
+        self.listbox_landmarks.config(yscrollcommand=scrollbar_landmarks.set)
+        scrollbar_landmarks.config(command=self.listbox_landmarks.yview)
+        landmarks_frame.pack(side=TOP, fill=BOTH, expand=True)
+
+        connections_frame = Frame(self.frame)
+        self.__add_label('Connections', anchor=N)
+        scrollbar_connections = Scrollbar(connections_frame, orient=VERTICAL)
+        scrollbar_connections.pack(side=RIGHT, fill=Y)
+        self.connections = StringVar()
+        self.listbox_connections = Listbox(connections_frame, listvariable=self.connections)
+        self.listbox_connections.bind('<Double-Button-1>', self.lb_connections_double_click)
+        self.listbox_connections.pack(side=TOP, fill=BOTH, expand=True)
+        self.listbox_connections.config(yscrollcommand=scrollbar_connections.set)
+        scrollbar_connections.config(command=self.listbox_connections.yview)
+        connections_frame.pack(side=TOP, fill=BOTH, expand=True)
 
     def __add_label(self, text, anchor=NW):
         label = Label(self.frame, width=40, text=text, anchor=anchor, justify=LEFT, bd=4)
@@ -45,9 +68,9 @@ class InfoBar:
         text = 'Scale (+/-): 1/' + str(self.root.display_scale)
         self.scale_label.config(text=text)
 
-    def listbox_double_click(self, _=None):
-        item_idx = self.listbox.curselection()[0]
-        landmark = self.listbox.get(item_idx)
+    def lb_landmarks_double_click(self, _=None):
+        item_idx = self.listbox_landmarks.curselection()[0]
+        landmark = self.listbox_landmarks.get(item_idx)
 
         parts = landmark.split(',')
         xy = parts[4:]
@@ -66,4 +89,23 @@ class InfoBar:
         landmarks = list(eval(self.landmarks.get()))
         landmarks[item_idx] = landmark_string + ',' + ','.join(xy)
         self.landmarks.set(landmarks)
+        self.root.update_preview()
+
+    def lb_connections_double_click(self, _=None):
+        item_idx = self.listbox_connections.curselection()[0]
+        connection = self.listbox_connections.get(item_idx)
+
+        msg = 'Please enter two comma-separated landmark codes:\n'
+        msg += '\nCODE1,CODE2\n\n'
+        msg += 'e.g.\nCQ,ER\n'
+        title = 'Editing connection'
+
+        connection_string = self.root.request_connection_string(title, msg, initial_value=connection)
+
+        if not connection_string:
+            return
+
+        connections = list(eval(self.connections.get()))
+        connections[item_idx] = connection_string
+        self.connections.set(connections)
         self.root.update_preview()
