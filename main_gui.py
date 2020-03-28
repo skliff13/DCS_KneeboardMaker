@@ -2,14 +2,14 @@ import os
 import json
 import warnings
 import numpy as np
-from PIL import ImageTk, Image as PIL_Image, ImageDraw, ImageFont, ImageColor
+from PIL import ImageTk, Image as PIL_Image, ImageColor
 from skimage import io
 from tkinter import *
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 from tkinter.simpledialog import askstring
 
-from display_settings import DisplaySettings
+from drawing import draw_landmarks, draw_connections
 from main_menu import MainMenu
 from status_bar import StatusBar
 from info_bar import InfoBar
@@ -253,7 +253,11 @@ class MainWindow(Tk):
     def update_preview(self):
         preview = PIL_Image.fromarray(self.img)
 
-        self.draw_landmarks(preview)
+        if self.info_bar.draw_landmarks:
+            draw_landmarks(self, preview)
+
+        if self.info_bar.draw_connections:
+            draw_connections(self, preview)
 
         size = (preview.size[0] // self.display_scale, preview.size[1] // self.display_scale)
         preview.thumbnail(size)
@@ -262,25 +266,6 @@ class MainWindow(Tk):
         self.preview_canvas.create_image(0, 0, image=preview, anchor=NW)
         self.preview_canvas.config(scrollregion=(0, 0, size[0], size[1]))
         self.preview = preview
-
-    def draw_landmarks(self, preview):
-        sts: DisplaySettings = DisplaySettings()
-
-        draw = ImageDraw.Draw(preview)
-
-        sz = sts.landmarkFontSize
-        font = ImageFont.truetype('font/Ubuntu-B.ttf', size=sz)
-        lw = sts.connectionWidth
-
-        for s in self.info_bar.listbox_landmarks.get(0, last=END):
-            parts = tuple(s.split(','))
-            _, code, r, color, x, y = parts
-            r, x, y = tuple(map(int, (r, x, y)))
-
-            for d in range(int(lw)):
-                r1 = r + d
-                draw.ellipse((x - r1, y - r1, x + r1, y + r1), outline=color)
-                draw.text((x - sz // 4 * 3, y - sz // 2), code, font=font)
 
 
 if __name__ == '__main__':
