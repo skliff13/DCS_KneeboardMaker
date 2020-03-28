@@ -1,0 +1,60 @@
+{
+  "landmarks": [
+    "Brucheville,BR,40,cyan,664,610",
+    "Ground B1,B1,40,blue,768,818",
+    "Ground B2,B2,40,blue,766,1044",
+    "Ground R2,R2,40,red,1150,1086",
+    "Ground R1,R1,40,red,1202,878",
+    "Bluee ship 1,BS1,50,blue,596,222",
+    "Blue ship 2,BS2,50,blue,184,112",
+    "Benu-sur-Mer,BE,40,magenta,1578,707",
+    "Red ships 1,RS1,50,red,1958,689",
+    "Red ships 2,RS2,50,red,2195,351",
+    "Smoke,SM,40,black,1135,618",
+    "Forest 1,F1,40,black,1034,906"
+  ],
+  "connections": [
+    "BR,B1",
+    "BR,SM",
+    "B1,F1",
+    "B1,B2",
+    "B2,F1",
+    "F1,R1",
+    "F1,R2",
+    "B2,R2",
+    "BR,BS1",
+    "BS1,BS2",
+    "BS2,BR",
+    "R1,R2",
+    "R1,SM",
+    "SM,BE",
+    "R1,BE",
+    "BE,RS1",
+    "RS1,RS2",
+    "BE,RS2"
+  ],
+  "scale_kilometers_per_pixel": 0.06425,
+  "slide_height": 814,
+  "slide_centers": [
+    [
+      760,
+      782
+    ],
+    [
+      1176,
+      784
+    ],
+    [
+      1402,
+      679
+    ],
+    [
+      370,
+      414
+    ],
+    [
+      2061,
+      506
+    ]
+  ]
+}
