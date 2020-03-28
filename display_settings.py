@@ -6,12 +6,12 @@ class DisplaySettings:
 
         # sizes of fonts and elements
         self.landmarkFontSize = 12
-        self.distanceFontSize = 6
-        self.connectionMargin = 20
-        self.distanceRectangleWidth = 80
-        self.distanceRectangleHeight = 45
-        self.angleRectangleWidth = 60
-        self.angleRectangleHeight = 23
+        self.distanceFontSize = 4
+        self.connectionMargin = 5
+        self.distanceRectangleWidth = 20
+        self.distanceRectangleHeight = 10
+        self.angleRectangleWidth = 12
+        self.angleRectangleHeight = 5
         self.connectionWidth = 1.5
 
         self.connectionColor = 'gold'      # color of the connection lines
@@ -28,5 +28,5 @@ class DisplaySettings:
         self.angleRectangleWidth = int(round(self.angleRectangleWidth * scale))
         self.angleRectangleHeight = int(round(self.angleRectangleHeight * scale))
         self.connectionWidth = int(self.connectionWidth * scale)
-        self.radiusMultiplier = self.radiusMultiplier * scale
+        # self.radiusMultiplier = self.radiusMultiplier * scale
 

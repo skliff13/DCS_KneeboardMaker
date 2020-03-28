@@ -7,6 +7,7 @@ class InfoBar:
         self.root = root
         self.frame = Frame(root, bd=1, relief=GROOVE)
         self.frame.pack(side=LEFT, fill=BOTH)
+        self.scale_kilometers_per_pixel = DoubleVar(value=0.06425)
 
         self.__add_label('Image info', anchor=N)
         self.img_file_label = self.__add_label('Image file: <not loaded>')
@@ -18,9 +19,11 @@ class InfoBar:
         self.draw_landmarks = IntVar(value=1)
         self.draw_connections = IntVar(value=1)
         self.cb_frame = Frame(self.frame, bd=4)
-        self.cb_landmarks = Checkbutton(self.cb_frame, text='Draw landmarks', variable=self.draw_landmarks)
+        self.cb_landmarks = Checkbutton(self.cb_frame, text='Draw landmarks', variable=self.draw_landmarks,
+                                        command=root.update_preview)
         self.cb_landmarks.pack(side=LEFT)
-        self.cb_connections = Checkbutton(self.cb_frame, text='Draw connections', variable=self.draw_connections)
+        self.cb_connections = Checkbutton(self.cb_frame, text='Draw connections', variable=self.draw_connections,
+                                          command=root.update_preview)
         self.cb_connections.pack(side=LEFT)
         self.cb_frame.pack(side=TOP)
 

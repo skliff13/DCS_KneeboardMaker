@@ -250,13 +250,13 @@ class MainWindow(Tk):
             msg = f'Failed to read image info from "{file_path}":\n\n{str(e)}'
             messagebox.showwarning('Failed to read image info', msg)
 
-    def update_preview(self):
+    def update_preview(self, _=None):
         preview = PIL_Image.fromarray(self.img)
 
-        if self.info_bar.draw_landmarks:
+        if self.info_bar.draw_landmarks.get():
             draw_landmarks(self, preview)
 
-        if self.info_bar.draw_connections:
+        if self.info_bar.draw_connections.get():
             draw_connections(self, preview)
 
         size = (preview.size[0] // self.display_scale, preview.size[1] // self.display_scale)
