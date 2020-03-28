@@ -25,7 +25,8 @@ def draw_landmarks(root, preview):
             r1 += 0.5
             draw.ellipse((x - r1, y - r1, x + r1, y + r1), outline=color)
 
-        draw.text((x - sz // 4 * 3, y - sz // 2), code, font=font)
+        tw, th = draw.textsize(code, font=font)
+        draw.text((x - tw // 2, y - th // 2), code, font=font)
 
 
 def draw_connections(root, preview):
@@ -49,8 +50,24 @@ def draw_connections(root, preview):
             print(f'WARNING: failed with connection {c}, found {len(ls)} landmarks instead of 2')
         else:
             draw_connection_line(draw, ls, sts)
-            draw_distance_text(draw, ls, root, sts)
-            draw_connection_angle(draw, ls, sts)
+            if root.info_bar.draw_distances.get():
+                draw_distance_text(draw, ls, root, sts)
+            if root.info_bar.draw_angles.get():
+                draw_connection_angle(draw, ls, sts)
+                draw_connection_angle(draw, ls[::-1], sts)
+
+
+def draw_slides(root, preview):
+    sts: DisplaySettings = DisplaySettings()
+    draw = ImageDraw.Draw(preview)
+
+    sh = root.info_bar.slide_height.get()
+    sw = int(sh / 1.5)
+    centers = root.info_bar.slide_centers
+
+    for center_xy in centers:
+        draw.rectangle((center_xy[0] - sw // 2, center_xy[1] - sh // 2, center_xy[0] + sw // 2, center_xy[1] + sh // 2),
+                       fill=None, outline=sts.slidesColor)
 
 
 def draw_distance_text(draw, ls, root, sts):
@@ -73,7 +90,8 @@ def draw_distance_text(draw, ls, root, sts):
         draw.rectangle((center_x - w // 2, center_y - h // 2, center_x + w // 2, center_y + h // 2), fill=clr)
 
         dist_text = '%i km\n%i nm' % (distance_km, distance_nm)
-        draw.text((center_x - sz // 4 * 5, center_y - sz // 1), dist_text, font=font)
+        tw, th = draw.textsize(dist_text, font=font)
+        draw.text((center_x - tw // 2, center_y - th // 2), dist_text, font=font)
 
 
 def draw_connection_line(draw, ls, sts):
@@ -89,6 +107,7 @@ def draw_connection_line(draw, ls, sts):
     x2 = x02 + (x01 - x02) * (r2 * sts.radiusMultiplier + dl) / d0
     y2 = y02 + (y01 - y02) * (r2 * sts.radiusMultiplier + dl) / d0
     draw.line([(x1, y1), (x2, y2)], fill=clr, width=lw)
+
 
 def draw_connection_angle(draw, ls, sts):
     dl = sts.connectionMargin
@@ -116,6 +135,6 @@ def draw_connection_angle(draw, ls, sts):
     if angle < 0:
         angle = 360 + angle
 
-    # TODO degree symbol, alignment
-    angle_text = '%i' % angle
-    draw.text((x1a - sz // 2, y1a - sz // 2), angle_text, font=font)
+    angle_text = '%i°' % angle
+    tw, th = draw.textsize(angle_text, font=font)
+    draw.text((x1a - tw // 2, y1a - th // 2), angle_text, font=font)

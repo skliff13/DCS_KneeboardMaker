@@ -12,8 +12,10 @@ class MainMenu:
         self.menu.add_cascade(label='File', menu=submenu)
         submenu.add_command(label='Open image (Ctrl+O)', command=self.root.open_image)
         submenu.add_command(label='Save info (Ctrl+S)', command=self.root.save_info)
+        submenu.add_command(label='Enter scale (Alt+S)', command=self.root.set_image_scale)
         self.root.bind_all("<Control-o>", self.root.open_image)
         self.root.bind_all("<Control-s>", self.root.save_info)
+        self.root.bind_all("<Alt-s>", self.root.set_image_scale)
         submenu.add_separator()
         submenu.add_command(label='Exit', command=root.destroy)
 

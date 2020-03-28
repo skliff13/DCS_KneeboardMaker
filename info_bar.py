@@ -1,5 +1,6 @@
 import os
 from tkinter import *
+from tkinter.messagebox import askquestion
 
 
 class InfoBar:
@@ -8,26 +9,38 @@ class InfoBar:
         self.frame = Frame(root, bd=1, relief=GROOVE)
         self.frame.pack(side=LEFT, fill=BOTH)
         self.scale_kilometers_per_pixel = DoubleVar(value=0.06425)
+        self.slide_height = IntVar(value=500)
+        self.slide_centers = []
 
         self.__add_label('Image info', anchor=N)
         self.img_file_label = self.__add_label('Image file: <not loaded>')
         self.img_resolution_label = self.__add_label('Image resolution: ')
-        self.__add_label('')
         self.__add_label('Display settings', anchor=N)
         self.scale_label = self.__add_label('Scale (+/-): ')
 
         self.draw_landmarks = IntVar(value=1)
         self.draw_connections = IntVar(value=1)
+        self.draw_angles = IntVar(value=1)
+        self.draw_distances = IntVar(value=0)
         self.cb_frame = Frame(self.frame, bd=4)
         self.cb_landmarks = Checkbutton(self.cb_frame, text='Draw landmarks', variable=self.draw_landmarks,
                                         command=root.update_preview)
-        self.cb_landmarks.pack(side=LEFT)
+        self.cb_landmarks.grid(row=0, column=0, sticky=W)
         self.cb_connections = Checkbutton(self.cb_frame, text='Draw connections', variable=self.draw_connections,
                                           command=root.update_preview)
-        self.cb_connections.pack(side=LEFT)
+        self.cb_connections.grid(row=0, column=1, sticky=W)
+        self.cb_angles = Checkbutton(self.cb_frame, text='Draw angles', variable=self.draw_angles,
+                                     command=root.update_preview)
+        self.cb_angles.grid(row=1, column=0, sticky=W)
+        self.cb_distances = Checkbutton(self.cb_frame, text='Draw distances', variable=self.draw_distances,
+                                       command=root.update_preview)
+        self.cb_distances.grid(row=1, column=1, sticky=W)
         self.cb_frame.pack(side=TOP)
 
-        self.__add_label('')
+        self.sld_slide_size = Scale(self.frame, variable=self.slide_height, label='Slides size', orient=HORIZONTAL,
+                                    command=root.update_preview, from_=300, to=1000)
+        self.sld_slide_size.pack(side=TOP, fill=X, padx=10)
+
         self.__add_label('Landmarks', anchor=N)
         landmarks_frame = Frame(self.frame)
         scrollbar_landmarks = Scrollbar(landmarks_frame, orient=VERTICAL)
@@ -35,6 +48,7 @@ class InfoBar:
         self.landmarks = StringVar()
         self.listbox_landmarks = Listbox(landmarks_frame, listvariable=self.landmarks)
         self.listbox_landmarks.bind('<Double-Button-1>', self.lb_landmarks_double_click)
+        self.listbox_landmarks.bind('<Delete>', self.lb_landmarks_delete)
         self.listbox_landmarks.pack(side=TOP, fill=BOTH, expand=True)
         self.listbox_landmarks.config(yscrollcommand=scrollbar_landmarks.set)
         scrollbar_landmarks.config(command=self.listbox_landmarks.yview)
@@ -94,7 +108,27 @@ class InfoBar:
         self.landmarks.set(landmarks)
         self.root.update_preview()
 
+    def lb_landmarks_delete(self, _=None):
+        if not self.listbox_landmarks.curselection():
+            return
+
+        item_idx = self.listbox_landmarks.curselection()[0]
+        landmark = self.listbox_landmarks.get(item_idx)
+
+        parts = landmark.split(',')
+        msg = f'Do you wish to delete landmark "{parts[0]}" ({parts[1]})?'
+        answer = askquestion('Delete item?', msg)
+
+        if answer == 'yes':
+            landmarks = list(eval(self.landmarks.get()))
+            landmarks.pop(item_idx)
+            self.landmarks.set(landmarks)
+            self.root.update_preview()
+
     def lb_connections_double_click(self, _=None):
+        if not self.listbox_connections.curselection():
+            return
+
         item_idx = self.listbox_connections.curselection()[0]
         connection = self.listbox_connections.get(item_idx)
 
@@ -112,3 +146,16 @@ class InfoBar:
         connections[item_idx] = connection_string
         self.connections.set(connections)
         self.root.update_preview()
+
+    def lb_connections_delete(self, _=None):
+        item_idx = self.listbox_connections.curselection()[0]
+        connection = self.listbox_connections.get(item_idx)
+
+        msg = f'Do you wish to delete connection "{connection}"?'
+        answer = askquestion('Delete item?', msg)
+
+        if answer == 'yes':
+            connections = list(eval(self.connections.get()))
+            connections.pop(item_idx)
+            self.connections.set(connections)
+            self.root.update_preview()

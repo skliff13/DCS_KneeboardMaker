@@ -7,9 +7,9 @@ from skimage import io
 from tkinter import *
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
-from tkinter.simpledialog import askstring
+from tkinter.simpledialog import askstring, askfloat
 
-from drawing import draw_landmarks, draw_connections
+from drawing import draw_landmarks, draw_connections, draw_slides
 from main_menu import MainMenu
 from status_bar import StatusBar
 from info_bar import InfoBar
@@ -52,6 +52,8 @@ class MainWindow(Tk):
         self.preview_canvas = preview_canvas
         self.preview_canvas.bind('<Motion>', self.mouse_move)
         self.preview_canvas.bind('<Button-1>', self.left_click)
+        self.preview_canvas.bind('<Button-3>', self.right_click)
+        self.bind_all('<BackSpace>', self.pop_slide_center)
         self.preview = empty_preview
 
         x_scrollbar.config(command=preview_canvas.xview)
@@ -92,6 +94,26 @@ class MainWindow(Tk):
         self.info_bar.landmarks.set(landmarks)
         self.update_preview()
 
+    def right_click(self, event):
+        x = event.x + self.x_scrollbar.get()[0] * self.img.shape[1]
+        y = event.y + self.y_scrollbar.get()[0] * self.img.shape[0]
+        x = int(x * self.display_scale)
+        y = int(y * self.display_scale)
+
+        sh = self.info_bar.slide_height.get()
+        sw = int(sh / 1.5)
+        left = max(1, min(x - sw // 2, self.img.shape[1] - sw - 1))
+        top = max(1, min(y - sh // 2, self.img.shape[0] - sh - 1))
+
+        center_xy = (left + sw // 2, top + sh // 2)
+        self.info_bar.slide_centers.append(center_xy)
+        self.update_preview()
+
+    def pop_slide_center(self, _=None):
+        if self.info_bar.slide_centers:
+            self.info_bar.slide_centers.pop()
+            self.update_preview()
+
     def add_connection(self, _=None):
         msg = 'Please enter two comma-separated landmark codes:\n'
         msg += '\nCODE1,CODE2\n\n'
@@ -109,7 +131,7 @@ class MainWindow(Tk):
         self.info_bar.connections.set(connections)
         self.update_preview()
 
-    def request_landmark_string(self, title, msg, initial_value='A,a,50,yellow'):
+    def request_landmark_string(self, title, msg, initial_value='Name,CODE,50,yellow'):
         landmark_string = None
         while True:
             try:
@@ -201,7 +223,10 @@ class MainWindow(Tk):
         info_path = os.path.splitext(self.file_path)[0] + '_info.json'
 
         info = {'landmarks': [s for s in self.info_bar.listbox_landmarks.get(0, last=END)],
-                'connections': [s for s in self.info_bar.listbox_connections.get(0, last=END)]}
+                'connections': [s for s in self.info_bar.listbox_connections.get(0, last=END)],
+                'scale_kilometers_per_pixel': self.info_bar.scale_kilometers_per_pixel.get(),
+                'slide_height': self.info_bar.slide_height.get(),
+                'slide_centers': self.info_bar.slide_centers}
 
         with open(info_path, 'wt') as f:
             json.dump(info, f, indent=2)
@@ -237,11 +262,13 @@ class MainWindow(Tk):
             with open(info_path,'rt') as f:
                 info = json.load(f)
 
-            landmarks = info['landmarks']
-            self.info_bar.landmarks.set(landmarks)
+            self.info_bar.landmarks.set(info['landmarks'])
+            self.info_bar.connections.set(info['connections'])
+            self.info_bar.scale_kilometers_per_pixel.set(info['scale_kilometers_per_pixel'])
+            self.info_bar.slide_height.set(info['slide_height'])
+            self.info_bar.slide_centers = info['slide_centers']
 
-            connections = info['connections']
-            self.info_bar.connections.set(connections)
+            self.info_bar.sld_slide_size.config(from_=self.img.shape[0] // 4, to=self.img.shape[0] - 2)
 
             self.info_bar.update_info()
             self.update_preview()
@@ -259,6 +286,8 @@ class MainWindow(Tk):
         if self.info_bar.draw_connections.get():
             draw_connections(self, preview)
 
+        draw_slides(self, preview)
+
         size = (preview.size[0] // self.display_scale, preview.size[1] // self.display_scale)
         preview.thumbnail(size)
         preview = ImageTk.PhotoImage(preview)
@@ -266,6 +295,14 @@ class MainWindow(Tk):
         self.preview_canvas.create_image(0, 0, image=preview, anchor=NW)
         self.preview_canvas.config(scrollregion=(0, 0, size[0], size[1]))
         self.preview = preview
+
+    def set_image_scale(self, _=None):
+        value = askfloat('Enter image scale', 'Enter image pixel size in kilometers',
+                         initialvalue=self.info_bar.scale_kilometers_per_pixel.get())
+
+        if value:
+            self.info_bar.scale_kilometers_per_pixel.set(value)
+            self.update_preview()
 
 
 if __name__ == '__main__':

@@ -2,17 +2,18 @@
 class DisplaySettings:
     def __init__(self):
         self.imageBrightnessAndContrast = (-40., 1.5)   # out = in * contrast + brightness
-        self.scale = 4                                # makes all outputs smaller/bigger
+        self.scale = 3                                # makes all outputs smaller/bigger
 
         # sizes of fonts and elements
         self.landmarkFontSize = 12
         self.distanceFontSize = 4
-        self.connectionMargin = 5
-        self.distanceRectangleWidth = 20
+        self.connectionMargin = 1
+        self.distanceRectangleWidth = 15
         self.distanceRectangleHeight = 10
         self.angleRectangleWidth = 12
         self.angleRectangleHeight = 5
         self.connectionWidth = 1.5
+        self.slidesColor = 'white'
 
         self.connectionColor = 'gold'      # color of the connection lines
         self.radiusMultiplier = 1.0     # affects all the radii
