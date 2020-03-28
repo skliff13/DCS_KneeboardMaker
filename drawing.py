@@ -1,5 +1,5 @@
 import math
-from PIL import ImageTk, Image as PIL_Image, ImageDraw, ImageFont, ImageColor
+from PIL import ImageDraw, ImageFont
 from tkinter import *
 
 from display_settings import DisplaySettings
@@ -11,7 +11,7 @@ def draw_landmarks(root, preview):
     draw = ImageDraw.Draw(preview)
 
     sz = sts.landmarkFontSize
-    font = ImageFont.truetype('font/Ubuntu-B.ttf', size=sz)
+    font = ImageFont.truetype(sts.font_path, size=sz)
     lw = sts.connectionWidth
 
     for s in root.info_bar.listbox_landmarks.get(0, last=END):
@@ -72,7 +72,7 @@ def draw_slides(root, preview):
 
 def draw_distance_text(draw, ls, root, sts):
     sz = sts.distanceFontSize
-    font = ImageFont.truetype('font/Ubuntu-B.ttf', size=sz)
+    font = ImageFont.truetype(sts.font_path, size=sz)
     r1, x01, y01 = ls[0]
     r2, x02, y02 = ls[1]
     d0 = ((x01 - x02) ** 2 + (y01 - y02) ** 2) ** 0.5
@@ -120,7 +120,7 @@ def draw_connection_angle(draw, ls, sts):
     y2 = y02 + (y01 - y02) * (r2 * sts.radiusMultiplier + dl) / d0
 
     sz = sts.distanceFontSize
-    font = ImageFont.truetype('font/Ubuntu-B.ttf', size=sz)
+    font = ImageFont.truetype(sts.font_path, size=sz)
     color = sts.connectionColor
     w = sts.angleRectangleWidth
     h = sts.angleRectangleHeight

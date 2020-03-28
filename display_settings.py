@@ -1,3 +1,5 @@
+import os
+
 
 class DisplaySettings:
     def __init__(self):
@@ -14,8 +16,9 @@ class DisplaySettings:
         self.angleRectangleHeight = 5
         self.connectionWidth = 1.5
         self.slidesColor = 'white'
+        self.font_path = 'fonts/calibri.ttf' if os.name == 'nt' else 'font/Ubuntu-B.ttf'
 
-        self.connectionColor = 'gold'      # color of the connection lines
+        self.connectionColor = 'orange'      # color of the connection lines
         self.radiusMultiplier = 1.0     # affects all the radii
         self.minConnCenterDistKm = 10   # minimum distance for the connection info to be drawn
 

@@ -12,16 +12,20 @@ class MainMenu:
         self.menu.add_cascade(label='File', menu=submenu)
         submenu.add_command(label='Open image (Ctrl+O)', command=self.root.open_image)
         submenu.add_command(label='Save info (Ctrl+S)', command=self.root.save_info)
-        submenu.add_command(label='Enter scale (Alt+S)', command=self.root.set_image_scale)
+        submenu.add_command(label='Export slides (Ctrl+E)', command=self.root.export_slides)
         self.root.bind_all("<Control-o>", self.root.open_image)
         self.root.bind_all("<Control-s>", self.root.save_info)
-        self.root.bind_all("<Alt-s>", self.root.set_image_scale)
+        self.root.bind_all("<Control-e>", self.root.export_slides)
         submenu.add_separator()
         submenu.add_command(label='Exit', command=root.destroy)
 
         submenu = Menu(self.menu, tearoff=False)
         self.menu.add_cascade(label='Edit', menu=submenu)
         submenu.add_command(label='Add connection (Ctrl+N)', command=self.root.add_connection)
+        submenu.add_command(label='Enter scale (Alt+S)', command=self.root.set_image_scale)
+        self.root.bind_all("<Alt-s>", self.root.set_image_scale)
+        submenu.add_command(label='Remove slide region (Ctrl+Backspace)', command=self.root.pop_slide_center)
+        self.root.bind_all('<Control-BackSpace>', self.root.pop_slide_center)
         submenu.add_separator()
         submenu.add_command(label='Zoom in (+)', command=self.root.zoom_in)
         self.root.bind_all('<plus>', self.root.zoom_in)
@@ -37,10 +41,11 @@ class MainMenu:
         submenu.add_command(label='About', command=self.about)
         self.root.bind_all("<F1>", self.about)
 
-    def about(self, event=None):
+    def about(self, _=None):
         txt = ''
         txt += 'DCS Kneeboard Maker ' + self.root.app_version + '\n\n'
         txt += 'Developed by skliff13\n'
+        txt += '(still under development)\n'
         txt += 'https://github.com/skliff13\n'
-        txt += 'Contact e-mail: vitali.liauchuk@gmail.com\n'
+        txt += 'Contact e-mail: skliff13@tut.by\n'
         messagebox.showinfo('About', txt)

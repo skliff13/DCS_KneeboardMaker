@@ -53,7 +53,9 @@ class MainWindow(Tk):
         self.preview_canvas.bind('<Motion>', self.mouse_move)
         self.preview_canvas.bind('<Button-1>', self.left_click)
         self.preview_canvas.bind('<Button-3>', self.right_click)
-        self.bind_all('<BackSpace>', self.pop_slide_center)
+        self.preview_canvas.bind('<MouseWheel>', self.mouse_wheel)
+        self.preview_canvas.bind('<Button-4>', self.mouse_wheel)
+        self.preview_canvas.bind('<Button-5>', self.mouse_wheel)
         self.preview = empty_preview
 
         x_scrollbar.config(command=preview_canvas.xview)
@@ -70,6 +72,12 @@ class MainWindow(Tk):
         y = int(y * self.display_scale)
         s = f'XY = ({x}, {y})'
         self.status_bar.set_status(s)
+
+    def mouse_wheel(self, event):
+        if event.num == 5 or event.delta == -120:
+            self.zoom_out()
+        if event.num == 4 or event.delta == 120:
+            self.zoom_in()
 
     def left_click(self, event):
         x = event.x + self.x_scrollbar.get()[0] * self.img.shape[1]
@@ -226,7 +234,12 @@ class MainWindow(Tk):
                 'connections': [s for s in self.info_bar.listbox_connections.get(0, last=END)],
                 'scale_kilometers_per_pixel': self.info_bar.scale_kilometers_per_pixel.get(),
                 'slide_height': self.info_bar.slide_height.get(),
-                'slide_centers': self.info_bar.slide_centers}
+                'slide_centers': self.info_bar.slide_centers,
+                'draw': {'landmarks': self.info_bar.draw_landmarks.get(),
+                         'connections': self.info_bar.draw_connections.get(),
+                         'angles': self.info_bar.draw_angles.get(),
+                         'distances': self.info_bar.draw_distances.get()}
+                }
 
         with open(info_path, 'wt') as f:
             json.dump(info, f, indent=2)
@@ -267,6 +280,10 @@ class MainWindow(Tk):
             self.info_bar.scale_kilometers_per_pixel.set(info['scale_kilometers_per_pixel'])
             self.info_bar.slide_height.set(info['slide_height'])
             self.info_bar.slide_centers = info['slide_centers']
+            self.info_bar.draw_landmarks.set(info['draw']['landmarks'])
+            self.info_bar.draw_connections.set(info['draw']['connections'])
+            self.info_bar.draw_angles.set(info['draw']['angles'])
+            self.info_bar.draw_distances.set(info['draw']['distances'])
 
             self.info_bar.sld_slide_size.config(from_=self.img.shape[0] // 4, to=self.img.shape[0] - 2)
 
@@ -303,6 +320,31 @@ class MainWindow(Tk):
         if value:
             self.info_bar.scale_kilometers_per_pixel.set(value)
             self.update_preview()
+
+    def export_slides(self, _=None):
+        preview = PIL_Image.fromarray(self.img)
+
+        if self.info_bar.draw_landmarks.get():
+            draw_landmarks(self, preview)
+
+        if self.info_bar.draw_connections.get():
+            draw_connections(self, preview)
+
+        out_dir = os.path.splitext(self.file_path)[0] + '_slides'
+        os.makedirs(out_dir, exist_ok=True)
+        img = np.array(preview)
+        for i, xy in enumerate(self.info_bar.slide_centers):
+            sh = self.info_bar.slide_height.get()
+            sw = int(sh / 1.5)
+            left = max(1, min(xy[0] - sw // 2, self.img.shape[1] - sw - 1))
+            top = max(1, min(xy[1] - sh // 2, self.img.shape[0] - sh - 1))
+
+            slide = img[top:top + sh, left:left + sw]
+            slide_path = os.path.join(out_dir, 'slide_%02i.png' % i)
+            io.imsave(slide_path, slide)
+
+        msg = f'The slides have been exported to "{out_dir}"'
+        messagebox.showinfo('Export finished', msg)
 
 
 if __name__ == '__main__':
