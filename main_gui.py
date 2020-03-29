@@ -326,6 +326,7 @@ class MainWindow(Tk):
             self.update_preview()
 
     def export_slides(self, _=None):
+        self.status_bar.set_status('Exporting ...')
         preview = PIL_Image.fromarray(self.img)
 
         if self.info_bar.draw_landmarks.get():

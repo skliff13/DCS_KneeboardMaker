@@ -1,0 +1,43 @@
+{
+  "landmarks": [
+    "Airfield Blue,AB,40,cyan,1540,289",
+    "Airfield Red,AR,40,magenta,678,880",
+    "Backup Airfield,BU,40,blue,877,223",
+    "Convoy,CV,40,red,447,630",
+    "Ground Targets,GT,40,red,303,379"
+  ],
+  "connections": [
+    "BU,AB",
+    "BU,AR",
+    "BU,CV",
+    "CV,AR",
+    "GT,BU",
+    "GT,CV"
+  ],
+  "scale_kilometers_per_pixel": 0.055,
+  "slide_height": 775,
+  "slide_centers": [
+    [
+      1384,
+      426
+    ],
+    [
+      902,
+      442
+    ],
+    [
+      500,
+      428
+    ],
+    [
+      620,
+      668
+    ]
+  ],
+  "draw": {
+    "landmarks": 1,
+    "connections": 1,
+    "angles": 1,
+    "distances": 1
+  }
+}
