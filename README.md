@@ -11,7 +11,7 @@ Such image can be made from in-game screenshots,
 or by scanning a vintage military map... 
 It's up to the user.
 
-Example (see file `example.png`, 2742 x 1544 pixels):
+Example (see file `example.png`, 1920 x 1080 pixels):
 
 ![](example.png?raw=true "example.png")
 
@@ -46,6 +46,9 @@ The GUI script can be run using your favourite Python3.7 interpreter:
 Required python packages are listed in `requirements.txt`.
 All these are standard packages and can be easily 
 installed using `pip`. 
+
+An easy way to have Python with plenty installed libraries is to install
+the latest [Anaconda](https://www.anaconda.com/distribution/).
  
 Enjoy!
 
