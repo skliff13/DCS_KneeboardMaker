@@ -11,7 +11,9 @@ Such image can be made from in-game screenshots,
 or by scanning a vintage military map... 
 It's up to the user.
 
-Example (see file `example.png`, 1920 x 1080 pixels):
+As a mission examples I took a 
+[user-made mission](https://www.digitalcombatsimulator.com/en/files/2380303/).
+Map example for whit mission is shown below (see file `example.png`, 1920 x 1080 pixels). 
 
 ![](example.png?raw=true "example.png")
 
