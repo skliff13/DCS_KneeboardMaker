@@ -12,8 +12,8 @@ class DisplaySettings:
         self.connectionMargin = 1
         self.distanceRectangleWidth = 15
         self.distanceRectangleHeight = 10
-        self.angleRectangleWidth = 12
-        self.angleRectangleHeight = 5
+        self.angleRectangleWidth = 8
+        self.angleRectangleHeight = 3.5
         self.connectionWidth = 1.5
         self.slidesColor = 'white'
         self.font_path = 'fonts/calibri.ttf' if os.name == 'nt' else 'font/Ubuntu-B.ttf'
